@@ -1,5 +1,6 @@
-# Use a stable, Alpine-based Python base image where openssl-1.1-compat is available
-FROM python:3.12-alpine
+# Use a stable, slim Debian-based Python base image compatible with OpenSSL 1.1
+# python:3.11-slim-bullseye is a good choice - slim keeps image size down, bullseye is Debian 11
+FROM python:3.11-slim-bullseye
 
 # Set environment variables for non-interactive operations
 ENV PYTHONUNBUFFERED 1 \
@@ -11,14 +12,14 @@ ENV PYTHONUNBUFFERED 1 \
 WORKDIR /app
 
 # Install system dependencies required by some Python packages and the Prisma binary
-# nodejs: Required for Prisma client generation and potentially some internal Prisma tools.
-# postgresql-client: Useful for basic PG interaction, might contain libs needed by Prisma.
-# openssl: Standard OpenSSL runtime libraries (good to have).
-# openssl-dev: OpenSSL development headers (might be needed during build, less likely for runtime).
-# openssl-1.1-compat: **CRITICAL** Provides libssl.so.1.1 and libcrypto.so.1.1 required by Prisma's default binary target on older Alpine versions.
-# libc6-compat: Provides compatibility layer for applications compiled against glibc.
-RUN apk add --no-cache nodejs postgresql-client openssl openssl-dev openssl-1.1-compat libc6-compat \
-    && rm -rf /var/cache/apk/* # Clean up apk cache
+# nodejs: Required for Prisma client generation.
+# postgresql-client: Useful for basic PG interaction and might contain libs needed by Prisma.
+# libssl1.1: **CRITICAL** Provides the OpenSSL 1.1 shared libraries specifically needed by Prisma's debian-openssl-1.1.x target.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    nodejs \
+    postgresql-client \
+    libssl1.1 \
+    && rm -rf /var/lib/apt/lists/* # Clean up apt cache
 
 # Copy the requirements file first to leverage Docker caching
 COPY requirements.txt .
@@ -29,7 +30,9 @@ RUN pip install -r requirements.txt
 # Copy the rest of your application code into the working directory
 COPY . .
 
-# Generate the Prisma client code (build step) - This usually runs fine as it doesn't need DB connection
+# Generate the Prisma client code (build step)
+# This command runs after code is copied but before the container starts.
+# It finds schema.prisma automatically if it's in the standard ./prisma location.
 RUN python -m prisma generate
 
 # --- The following section defines the command that runs when the container starts (runtime) ---
