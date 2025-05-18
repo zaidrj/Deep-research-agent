@@ -1,5 +1,5 @@
-# Use the recommended stable, Alpine-based Python base image with no detected vulnerabilities
-FROM python:3.13-alpine
+# Use a stable, Alpine-based Python base image where openssl-1.1-compat is available
+FROM python:3.12-alpine
 
 # Set environment variables for non-interactive operations
 ENV PYTHONUNBUFFERED 1 \
@@ -15,7 +15,7 @@ WORKDIR /app
 # postgresql-client: Useful for basic PG interaction, might contain libs needed by Prisma.
 # openssl: Standard OpenSSL runtime libraries (good to have).
 # openssl-dev: OpenSSL development headers (might be needed during build, less likely for runtime).
-# openssl-1.1-compat: **CRITICAL** Provides libssl.so.1.1 and libcrypto.so.1.1 required by Prisma's default binary target.
+# openssl-1.1-compat: **CRITICAL** Provides libssl.so.1.1 and libcrypto.so.1.1 required by Prisma's default binary target on older Alpine versions.
 # libc6-compat: Provides compatibility layer for applications compiled against glibc.
 RUN apk add --no-cache nodejs postgresql-client openssl openssl-dev openssl-1.1-compat libc6-compat \
     && rm -rf /var/cache/apk/* # Clean up apk cache
