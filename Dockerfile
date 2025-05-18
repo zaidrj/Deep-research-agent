@@ -13,9 +13,11 @@ WORKDIR /app
 # Install system dependencies required by some Python packages and the Prisma binary
 # nodejs: Required for Prisma client generation and potentially some internal Prisma tools.
 # postgresql-client: Useful for basic PG interaction, might contain libs needed by Prisma.
-# openssl-dev: **CRITICAL** Provides OpenSSL development libraries required by the Prisma binary for TLS/SSL connections.
-# libc6-compat: Provides compatibility layer for applications compiled against glibc (like the Prisma binary often is).
-RUN apk add --no-cache nodejs postgresql-client openssl-dev libc6-compat \
+# openssl: Standard OpenSSL runtime libraries (good to have).
+# openssl-dev: OpenSSL development headers (might be needed during build, less likely for runtime).
+# openssl-1.1-compat: **CRITICAL** Provides libssl.so.1.1 and libcrypto.so.1.1 required by Prisma's default binary target.
+# libc6-compat: Provides compatibility layer for applications compiled against glibc.
+RUN apk add --no-cache nodejs postgresql-client openssl openssl-dev openssl-1.1-compat libc6-compat \
     && rm -rf /var/cache/apk/* # Clean up apk cache
 
 # Copy the requirements file first to leverage Docker caching
@@ -27,7 +29,7 @@ RUN pip install -r requirements.txt
 # Copy the rest of your application code into the working directory
 COPY . .
 
-# Generate the Prisma client code (build step)
+# Generate the Prisma client code (build step) - This usually runs fine as it doesn't need DB connection
 RUN python -m prisma generate
 
 # --- The following section defines the command that runs when the container starts (runtime) ---
