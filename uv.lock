@@ -562,15 +562,6 @@ wheels = [
 ]
 
 [[package]]
-name = "mangodb"
-version = "0.9"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pymongo" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/80/67/521e3ec28653dc7bc7fc0244eed0401cd50d6870bd2cbd58d9737fc97aeb/mangodb-0.9.tar.gz", hash = "sha256:e8f28602309270ca514cb3364a7ca457ab2dd956bf6b4ae0bd07e47650aebee4", size = 3574 }
-
-[[package]]
 name = "markupsafe"
 version = "3.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1130,7 +1121,6 @@ dependencies = [
     { name = "fastapi" },
     { name = "firecrawl" },
     { name = "httpx" },
-    { name = "mangodb" },
     { name = "motor" },
     { name = "openai-agents" },
     { name = "passlib", extra = ["bcrypt"] },
@@ -1153,7 +1143,6 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115.12" },
     { name = "firecrawl", specifier = ">=2.1.2" },
     { name = "httpx", specifier = ">=0.28.1" },
-    { name = "mangodb", specifier = ">=0.9" },
     { name = "motor", specifier = ">=3.7.0" },
     { name = "openai-agents", specifier = ">=0.0.11" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
