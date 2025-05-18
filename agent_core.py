@@ -111,8 +111,6 @@ async def research_topic(
         print(f"ERROR: Deep research tool execution failed for '{query}': {e}")
         return {"error": str(e), "success": False, "final_analysis": "Deep research failed.", "sources_count": 0, "sources": []}
 
-
-
 @function_tool
 async def deep_research(
     query: str,

@@ -2,8 +2,6 @@ datetime
 dotenv
 fastapi
 firecrawl
-mangodb
-motor
 openai-agents
 pydantic-settings
 pytz
@@ -11,5 +9,4 @@ requests
 typing
 uvicorn
 passlib[bcrypt]
-bson
 prisma
